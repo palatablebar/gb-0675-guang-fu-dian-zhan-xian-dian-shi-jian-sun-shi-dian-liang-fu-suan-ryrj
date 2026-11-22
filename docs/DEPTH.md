@@ -29,10 +29,12 @@
 | TRAP-06 | 全角千分位 | 静默错算或证据丢失 | 以可复核规则显式处理 | `app/modules/devices/rules.py` | `tests/test_devices.py::test_fullwidth_number` |
 | TRAP-11 | UTC归一 | 静默错算或证据丢失 | 以可复核规则显式处理 | `app/modules/devices/rules.py` | `tests/test_devices.py::test_time_equivalence` |
 | TRAP-23 | 限电区间并集 | 静默错算或证据丢失 | 以可复核规则显式处理 | `app/modules/slicing/rules.py` | `tests/test_slicing.py::test_overlapping_real` |
+| TRAP-24 | 同名编号跨站 | 按原编号合并致两站电量互串 | 正式身份=场站+原编号，全程复合键 | `app/modules/intake/reader.py` | `tests/test_intake.py::test_same_name_cross_station_no_merge` |
+| TRAP-25 | 缺少场站依据 | 静默落站或丢弃 | 隔离待查不落站，保留原值行号 | `app/modules/devices/rules.py` | `tests/test_intake.py::test_missing_station_pending` |
 
 ## 对账规则
 
-原始逻辑输入=采纳行+隔离行+空行+重复表头+同值重复。业务计算按 DATA-DICTIONARY.md 分别核验，不能把上级与下级重复加总。所有隔离保留编号、原值、原始行号和稳定原因码。
+原始逻辑输入=采纳行+隔离行+空行+重复表头+同值重复。业务计算按 DATA-DICTIONARY.md 分别核验，不能把上级与下级重复加总。所有隔离保留编号、原值、原始行号和稳定原因码。场站内事件并集=切片、基线=实际+损失各自对平；区域合计=各站结果之和，并以全批直接合计复核，未归集行使两口径相抵时区域不可加总，批次不得归档。
 
 ## 已知不覆盖
 

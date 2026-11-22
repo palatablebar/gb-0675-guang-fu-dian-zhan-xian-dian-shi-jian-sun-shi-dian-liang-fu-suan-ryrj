@@ -28,12 +28,13 @@ def read_source(state, fields, aliases):
             row=dict(zip(header,cells));row['_line']=line
             if len(cells)!=len(header): reject(state,row,'COLUMN_COUNT',f'需要{len(header)}列，实际{len(cells)}列');continue
             if not row.get('id','').strip(): reject(state,row,'MISSING_ID','编号不能为空');continue
-            row['id']=row['id'].strip();records.append(row)
+            row['id']=row['id'].strip();row['station']=row.get('station','').strip();records.append(row)
     except csv.Error:
         raise BusinessError('BROKEN_CSV','CSV引号或末行损坏')
     if not state['counts']['input']: raise BusinessError('HEADER_ONLY','文件只有表头')
+    # 同名编号裁定：正式身份=场站+原编号，去重与冲突都按复合键，绝不按原编号跨站合并。
     by_id={}
-    for row in records: by_id.setdefault(row['id'],[]).append(row)
+    for row in records: by_id.setdefault((row['station'],row['id']),[]).append(row)
     selected=[]
     for key,rows in by_id.items():
         identities={tuple((k,v) for k,v in r.items() if k!='_line') for r in rows}

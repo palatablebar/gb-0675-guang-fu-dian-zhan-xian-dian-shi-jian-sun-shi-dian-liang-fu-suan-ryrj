@@ -2,9 +2,12 @@ from app.modules.loss.rules import integrate
 from decimal import Decimal
 
 def test_a_loss_20_not_overlap_sum(clean):
-    total=sum(Decimal(r['loss_kwh']) for r in clean['energy_rows'] if r['device']=='INV-A');assert total.quantize(Decimal('.0001'))==Decimal('20.0000')
+    total=sum(Decimal(r['loss_kwh']) for r in clean['energy_rows'] if r['uid']=='北岭/INV-A');assert total.quantize(Decimal('.0001'))==Decimal('20.0000')
 def test_b_loss_real(clean):
-    total=sum(Decimal(r['loss_kwh']) for r in clean['energy_rows'] if r['device']=='INV-B');assert total.quantize(Decimal('.0001'))==Decimal('6.6667')
+    total=sum(Decimal(r['loss_kwh']) for r in clean['energy_rows'] if r['uid']=='北岭/INV-B');assert total.quantize(Decimal('.0001'))==Decimal('6.6667')
+def test_south_a_loss_real(clean):
+    # 同名 INV-A 在南岭独立核算，不与北岭互串
+    total=sum(Decimal(r['loss_kwh']) for r in clean['energy_rows'] if r['uid']=='南岭/INV-A');assert total.quantize(Decimal('.0001'))==Decimal('10.0000')
 def test_unknown_remains_null(sample):
     assert sum(r['loss_kwh'] is None for r in sample['energy_rows'])==2
 def test_above_baseline_zero_loss(clean):

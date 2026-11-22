@@ -10,4 +10,4 @@ def integrate(estimate):
 def apply(state):
     rows=[integrate(e) for e in state['estimates']];state['energy_rows']=rows
     total=sum((number(r['loss_kwh']) for r in rows if r['loss_kwh'] is not None),Decimal(0))
-    state['views']['loss']={'title':'损失电量','rows':[{k:v for k,v in r.items() if k not in ['sample_at','zone','irradiance','status']} for r in rows],'metrics':{'已确定损失_kWh':str(total.quantize(Decimal('.0001'))),'未定片段':sum(r['loss_kwh'] is None for r in rows)}}
+    state['views']['loss']={'title':'损失电量','rows':[{k:v for k,v in r.items() if k not in ['sample_at','zone','irradiance','status','uid']} for r in rows],'metrics':{'可结算损失_kWh':str(total.quantize(Decimal('.0001'))),'未定片段':sum(r['loss_kwh'] is None for r in rows)}}
